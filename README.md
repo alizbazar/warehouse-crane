@@ -33,6 +33,7 @@ API ENDPOINT: /api/
         * manual, or with call crane -button
     + save location
         * save location to DB once item is put in store
+    + confirm unload complete
 - Pick up item from storage
     + go to the iteam
         * show map with own location, crane location and item location
