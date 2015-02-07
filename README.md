@@ -3,6 +3,20 @@
 MANAGEMENT SITE FRONTEND: /
 API ENDPOINT: /api/
 
+# Prerequisits
+
+- Install Mongo: `brew update && brew install mongodb`
+- Install NPM: `brew install npm`
+
+
+# Running the server
+
+    First, start the database locally, run 'mongod --dbpath ~/dev/db', where ~/dev/db is the location of the directory where you want to save the database
+
+    To run the server, run `node web`
+
+
+
 # Functionality available to the watch (usage API):
 - object Task {itemName, taskName [getItem | storeItem | unloadToStore]}
 - getNextTask() -> task

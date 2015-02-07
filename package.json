@@ -1,0 +1,25 @@
+{
+  "name": "warehouseCrane",
+  "subdomain": "warehouseCrane",
+  "version": "0.0.1-6",
+  "scripts": {
+    "start": "node web"
+  },
+  "dependencies": {
+    "express": "4.*",
+    "hogan-express": "*",
+    "less-middleware": "1.0.*",
+    "mongojs": "*",
+    "q": "*",
+    "request": "*",
+    "serve-favicon": "*",
+    "body-parser": "1.0.*",
+    "debug": "~0.7.4",
+    "morgan": "1.5.*",
+    "errorhandler": "1.3.*"
+  },
+  "engines": {
+    "node": "0.12.x",
+    "npm": "2.3.x"
+  }
+}
