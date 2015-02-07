@@ -42,7 +42,7 @@ var db = mongojs(dbURI, ['tasks', 'items']);
 app.get('/', routes.index);
 
 // This seem to cause some trouble.
-app.use('/api', api);
+app.use('/api', api(db));
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

@@ -20,7 +20,7 @@ API ENDPOINT: /api/
 # Functionality available to the watch (usage API):
 - object Task {itemName, taskName [getItem | storeItem | unloadToStore]}
 - getNextTask() -> task
-- task->setStatus([notStarted | goingToStorage | goingToLoadingArea | carryingToLoadingArea | carryingToStorage | complete])
+- task->setStatus([goingToStorage | leavingStorage | stored])
 - object Item {itemName, location}
 - createNewItem({itemName, itemData}) -> item
 - item->setLocation(location)
