@@ -13,13 +13,15 @@ module.exports = function(db) {
     });
 
     router.get('/getNextTask', function(req, res, next) {
-        db.tasks.findOne(function(err, task) {
-            console.log(task);
-        });
-
-        //console.log(docs);
-        db.tasks.findOne(function(err, task) {
+        // TODO: find with status !COMPLETED
+        db.tasks.find({
+            status: {
+                $not: /COMPLETED/
+            }
+        }).sort({pos: 1}).limit(1, function(err, docs) {
             // TODO: error handling
+            var task = docs[0];
+
             if (task) {
                 db.items.findOne({
                     _id: mongojs.ObjectId(task.itemId)
@@ -57,17 +59,21 @@ module.exports = function(db) {
             return;
         }
 
-        if (status == 'STARTED') {
+        if (status == 'STARTED' || status == 'COMPLETED') {
             db.tasks.findOne({
                 _id: mongojs.ObjectId(taskId)
             }, function(err, task) {
                 if (task.name == 'GET_ITEM') {
-                    db.items.update({_id: mongojs.ObjectId(task.itemId)},
-                    {
-                        $set: {
-                            status: 'LEAVING_STORAGE'
-                        }
-                    });
+                    if (status == 'STARTED') {
+                        db.items.update({_id: mongojs.ObjectId(task.itemId)},
+                        {
+                            $set: {
+                                status: 'LEAVING_STORAGE'
+                            }
+                        });
+                    } else if (status == 'COMPLETED') {
+                        db.items.remove({_id: mongojs.ObjectId(task.itemId)}, true);
+                    }
 
                 }
             });
@@ -107,6 +113,7 @@ module.exports = function(db) {
         db.items.insert(item, function(err, saved) {
             if (!err && saved) {
                 res.send({
+                    item: saved,
                     success: true,
                     code: 'ITEM_CREATED'
                 });
@@ -123,8 +130,8 @@ module.exports = function(db) {
 
     router.post('/item/:id/setLocation', function(req, res, next) {
         var location = {
-            hoist: req.param('hoist'),
             bridge: req.param('bridge'),
+            hoist: req.param('hoist'),
             trolley: req.param('trolley')
         };
 
@@ -153,7 +160,35 @@ module.exports = function(db) {
 
     });
 
+    // supply [name, itemId] parameters in querystring
+    router.post('/task/create', function(req, res, next) {
+        var task = {
+            name: req.param('name'),
+            itemId: req.param('itemId')
+        };
+        db.tasks.runCommand('count', function(err, count) {
+            if (task.name == 'INCOMING_CARGO') {
+                task.pos = 0;
+            } else {
+                task.pos = count.n;
+            }
+            db.tasks.insert(task, function(err, saved) {
+                if (!err && saved) {
+                    res.send({
+                        success: true,
+                        code: 'TASK_CREATED'
+                    });
+                } else {
+                    res.send({
+                        success: false,
+                        code: 'ERROR_IN_TASK_CREATION'
+                    });
+                }
+                next();
+            });
 
+        });
+    });
 
 
     return router;

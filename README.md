@@ -40,24 +40,32 @@ API ENDPOINT: /api/
 - visualize storage floor?
 
 # Watch Functionality
-- Unload cargo to storage
-    + create / scan an item
-        * creates a new item (if doesn't exist yet)
-    + transfer to storage
+- Store incoming cargo [START] {incomingStart}
+    1. [Select an item] -> [Item XYZ] {incomingSelect}
+        * [SELECT] (gray, turns green when close by)
+        * -> creates a new item (if doesn't exist yet)
+    2. [Transfer item to storage] {incomingTransfer}
+        * [SAVE LOCATION]
         * manual, or with call crane -button
-    + save location
-        * save location to DB once item is put in store
-    + confirm unload complete
-- Pick up item from storage
-    + go to the iteam
+        * -> save location to DB once item is put in store
+    3. [More items to store?] {incomingMore}
+        * [NO] -> next task
+        * [YES] -> Go to 1.
+    + [Select another item?]
+- Get item from storage [START] {outgoingStart}
+    1. Map view - display item ID {outgoingMap}
         * show map with own location, crane location and item location
         * drive crane to the item location
-    + carry item to loading area
+        * [SELECT] (gray, turns green when close by)
+    2. [Transfer item to loading area] {outgoingTransfer}
+        * [TRANSFER COMPLETE]
         * manual, or with call crane -button
-    + remove item from storage
-        * deletes the item from DB
+        * -> remove item from storage
 - Call crane to own location
     + get location of the watch / location beacon
     + set crane target to the location
     + drive crane to the location
+- Drive crane to target location
+    + item location when picking up an item
+    + loading area when unloading cargo
 
