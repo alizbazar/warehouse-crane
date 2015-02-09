@@ -1,7 +1,6 @@
 {
-  "name": "warehouseCrane",
-  "subdomain": "warehouseCrane",
-  "version": "0.0.1-6",
+  "name": "warehouse-crane",
+  "version": "0.0.2",
   "scripts": {
     "start": "node web"
   },
@@ -20,7 +19,6 @@
     "underscore-node": "0.1.*"
   },
   "engines": {
-    "node": "0.12.x",
-    "npm": "2.3.x"
+    "node": "0.12.x"
   }
 }

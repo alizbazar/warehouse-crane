@@ -28,7 +28,7 @@ app.use(require('less-middleware')(path.join(__dirname, '/public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Set production database URL here
-var dbURI = 'measuretl:PASS@xxx.mongolab.com:47968/warehouseCrane';
+var dbURI = process.env.MONGOLAB_URI || 'localhost:27017/warehouseCrane';
 
 var env = process.env.NODE_ENV || 'development';
 if (env == 'development') {
