@@ -69,3 +69,28 @@ API ENDPOINT: /api/
     + item location when picking up an item
     + loading area when unloading cargo
 
+
+
+#####  INCOMING_CARGO ####
+# Run curl on commandline (top left)
+
+curl -i -X POST -d "name=INCOMING_CARGO" http://localhost:5000/api/task/create
+
+
+
+
+
+#####  GET ITEM ####
+
+# 1. Copy latest ITEM_CREATED id to clipboard
+# 2. Replace the id below from clipboard
+# 3. Run curl on commandline (top left)
+
+curl -i -X POST -d "name=GET_ITEM&itemId=54d741f3e24b2bbb4c356aa8" http://localhost:5000/api/task/create
+
+
+#####  CREATE TASKS AUTOMATICALLY ####
+
+curl -i -X POST http://localhost:5000/api/generateMoreTasks
+
+

@@ -46,9 +46,8 @@ module.exports = function(db) {
     });
 
     router.post('/task/:id/setStatus', function(req, res, next) {
-        var status = req.param('status');
-        var taskId = req.param('id');
-        console.log('setting:' + status + ':' + taskId);
+        var status = req.body.status;
+        var taskId = req.params.id;
 
         if (status != 'NOT_STARTED' && status != 'STARTED' && status != 'COMPLETED') {
             res.send({
@@ -63,7 +62,7 @@ module.exports = function(db) {
             db.tasks.findOne({
                 _id: mongojs.ObjectId(taskId)
             }, function(err, task) {
-                if (task.name == 'GET_ITEM') {
+                if (task && task.name == 'GET_ITEM') {
                     if (status == 'STARTED') {
                         db.items.update({_id: mongojs.ObjectId(task.itemId)},
                         {
@@ -85,7 +84,6 @@ module.exports = function(db) {
                 status: status
             }
         }, function(err, updated) {
-            console.log(updated);
             if (!err && updated.n == 1) {
                 res.send({
                     success: true,
@@ -105,13 +103,14 @@ module.exports = function(db) {
 
     router.post('/item/create', function(req, res, next) {
         var item = {
-            name: req.param('name'),
-            info: req.param('info'),
+            name: req.body.name,
+            info: req.body.info,
             status: 'GOING_TO_STORAGE'
         };
 
         db.items.insert(item, function(err, saved) {
             if (!err && saved) {
+                console.log('ITEM_CREATED: ' + saved._id);
                 res.send({
                     item: saved,
                     success: true,
@@ -130,12 +129,12 @@ module.exports = function(db) {
 
     router.post('/item/:id/setLocation', function(req, res, next) {
         var location = {
-            bridge: req.param('bridge'),
-            hoist: req.param('hoist'),
-            trolley: req.param('trolley')
+            bridge: req.body.bridge,
+            hoist: req.body.hoist,
+            trolley: req.body.trolley
         };
 
-        var itemId = req.param('id');
+        var itemId = req.params.id;
 
         db.items.update({_id: mongojs.ObjectId(itemId)},
         {
@@ -163,9 +162,14 @@ module.exports = function(db) {
     // supply [name, itemId] parameters in querystring
     router.post('/task/create', function(req, res, next) {
         var task = {
-            name: req.param('name'),
-            itemId: req.param('itemId')
+            name: req.body.name
         };
+
+        // Unless task is incoming cargo
+        if (task.name != 'INCOMING_CARGO') {
+            task.itemId = req.body.itemId;
+        }
+
         db.tasks.runCommand('count', function(err, count) {
             if (task.name == 'INCOMING_CARGO') {
                 task.pos = 0;
