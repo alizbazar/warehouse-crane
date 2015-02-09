@@ -194,6 +194,65 @@ module.exports = function(db) {
         });
     });
 
+    // Receive notifications from the client
+    // (for testing and demo purposes)
+    router.post('/notify', function(req, res, next) {
+        var notification = req.body.notification;
+        console.log('NOTIFICATION: ' + notification);
+        next();
+        res.send({
+            success: true,
+            code: 'NOTIFICATION_RECEIVED'
+        });
+    });
+
+    router.post('/generateMoreTasks', function(req, res, next) {
+        // See if there are stored items already
+        db.items.find({
+            status: 'STORED'
+        }).sort({pos: 1}, function(err1, docs) {
+            var getTasks = [];
+            if (docs.length > 0) {
+                _.each(docs, function(doc) {
+                    getTasks.push({
+                        name: 'GET_ITEM',
+                        itemId: doc._id
+                    });
+                });
+            }
+
+            // Insert INCOMING_CARGO task
+            db.tasks.insert({
+                name: 'INCOMING_CARGO'
+            }, function(err2) {
+                var respond = function(err3) {
+                    if (!err1 && !err2 && !err3) {
+                        res.send({
+                            success: true,
+                            code: 'NEW_TASKS_CREATED'
+                        });
+                    } else {
+                        res.send({
+                            success: false,
+                            code: 'ERROR_WHILE_GENERATING_TASKS'
+                        });
+                    }
+                    next();
+                };
+
+                if (getTasks.length == 0) {
+                    respond();
+                } else {
+                    // Insert GET_ITEM tasks for already stored items
+                    db.tasks.insert(getTasks, function(err) {
+                        respond(err);
+                    });
+                }
+            });
+
+        });
+    });
+
 
     return router;
 
